@@ -1,0 +1,21 @@
+{
+  "name": "bjcp-scraper",
+  "version": "1.0.0",
+  "description": "Scraper for BJCP beer styles",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Tu Nombre",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/cheerio": "^0.22.35",
+    "axios": "^1.7.1",
+    "cheerio": "^1.0.0-rc.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

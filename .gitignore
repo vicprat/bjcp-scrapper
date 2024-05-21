@@ -1,0 +1,36 @@
+# Node.js & TypeScript
+node_modules/
+dist/ 
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary Files & Directories
+*.tmp
+*.temp
+
+# Editor and IDE Files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+.env
+
+# Miscellaneous 
+pids/ 
+results/
+tmp/
+coverage/
+
