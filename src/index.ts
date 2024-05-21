@@ -1,3 +1,4 @@
+// BJCP Scrapper
 import axios from 'axios'
 import cheerio from 'cheerio'
 import fs from 'fs'
@@ -143,3 +144,176 @@ async function main() {
 }
 
 main()
+
+// Character Counter
+// import * as fs from 'fs'
+// import * as path from 'path'
+
+// const jsonFilePath = path.join(__dirname, '..', '2021beerStyles.json')
+// interface BeerStyle {
+//   category: string
+//   name: string
+//   overallImpression: string
+//   appearance: string
+//   aroma: string
+//   flavor: string
+//   mouthfeel: string
+//   history: string
+//   characteristicIngredients: string
+//   styleComparisonAndVitalStatistics: string
+//   ibu: string
+//   srm: string
+//   og: string
+//   fg: string
+//   abv: string
+//   commercialExamples: string
+//   styleAttributes: string
+// }
+
+// const data = fs.readFileSync(jsonFilePath, 'utf-8')
+// const beerStyles: BeerStyle[] = JSON.parse(data)
+
+// async function countCharactersForTranslation(
+//   styles: BeerStyle[]
+// ): Promise<number> {
+//   let totalCharacters = 0
+
+//   styles.forEach((style: BeerStyle) => {
+//     for (const key in style) {
+//       if (style.hasOwnProperty(key)) {
+//         if (style[key as keyof BeerStyle]) {
+//           totalCharacters += style[key as keyof BeerStyle].length
+//         }
+//       }
+//     }
+//   })
+
+//   return totalCharacters
+// }
+
+// countCharactersForTranslation(beerStyles)
+//   .then((total) => {
+//     console.log('Total de caracteres a traducir:', total)
+//   })
+//   .catch((err) => {
+//     console.error('Error al contar caracteres:', err)
+//   })
+
+// import * as deepl from 'deepl-node'
+// import fs from 'fs'
+// import path from 'path'
+// import dotenv from 'dotenv'
+
+// dotenv.config()
+
+// interface BeerStyle {
+//   category: string
+//   name: string
+//   overallImpression: string
+//   appearance: string
+//   aroma: string
+//   flavor: string
+//   mouthfeel: string
+//   history: string
+//   characteristicIngredients: string
+//   styleComparisonAndVitalStatistics: string
+//   ibu: string
+//   srm: string
+//   og: string
+//   fg: string
+//   abv: string
+//   commercialExamples: string
+//   styleAttributes: string
+// }
+
+// const jsonFilePath = path.join(__dirname, '..', '2021beerStyles.json')
+// const jsonFileEspPath = path.join(__dirname, '..', '2021beerStylesEsp.json')
+// const authKey = process.env.DEEPL_API_KEY || ''
+
+// if (!authKey) {
+//   console.error('Error: Missing DeepL API key (DEEPL_API_KEY).')
+//   process.exit(1)
+// }
+
+// const translator = new deepl.Translator(authKey)
+// const beerStyles: BeerStyle[] = JSON.parse(
+//   fs.readFileSync(jsonFilePath, 'utf-8')
+// )
+// const totalStyles = beerStyles.length
+
+// function isValidText(text: string | string[]): boolean {
+//   if (typeof text === 'string') return text.trim() !== ''
+//   if (Array.isArray(text)) return text.some((str) => str.trim() !== '')
+//   return false
+// }
+
+// async function translateBeerStyles(
+//   beerStyles: BeerStyle[]
+// ): Promise<BeerStyle[]> {
+//   const beerStylesTranslated: BeerStyle[] = []
+//   let stylesTranslated = 0
+
+//   for (const [index, style] of beerStyles.entries()) {
+//     console.log(`Translating style ${index + 1} of ${totalStyles}...`)
+
+//     const translatedStyle: BeerStyle = {} as BeerStyle
+//     for (const key in style) {
+//       if (style.hasOwnProperty(key)) {
+//         if (
+//           !['category', 'name', 'ibu', 'srm', 'og', 'fg', 'abv'].includes(
+//             key
+//           ) &&
+//           isValidText(style[key as keyof BeerStyle])
+//         ) {
+//           try {
+//             const translatedText = await translator.translateText(
+//               style[key as keyof BeerStyle],
+//               null,
+//               'es'
+//             )
+//             translatedStyle[key as keyof BeerStyle] = translatedText.text
+//           } catch (error: any) {
+//             console.error(
+//               `Error translating '${key}' in style ${index + 1}:`,
+//               error.message
+//             )
+//             translatedStyle[key as keyof BeerStyle] =
+//               style[key as keyof BeerStyle]
+//           }
+//         } else {
+//           translatedStyle[key as keyof BeerStyle] =
+//             style[key as keyof BeerStyle]
+//         }
+//       }
+//     }
+//     beerStylesTranslated.push(translatedStyle)
+//     stylesTranslated++
+
+//     console.log(`Style ${index + 1} translated!`)
+//   }
+
+//   console.log(`Translated ${stylesTranslated} of ${totalStyles} styles.`)
+//   return beerStylesTranslated
+// }
+
+// async function translateAndWriteToFile() {
+//   try {
+//     console.log('Starting translation...')
+
+//     const beerStylesTranslated = await translateBeerStyles(beerStyles)
+
+//     fs.writeFileSync(
+//       jsonFileEspPath,
+//       JSON.stringify(beerStylesTranslated, null, 2),
+//       'utf-8'
+//     )
+
+//     console.log(
+//       '¡Translation completed! The translated content has been saved to 2021beerStylesEsp.json.'
+//     )
+//   } catch (error: any) {
+//     console.error('Error during translation and writing:', error.message)
+//   }
+// }
+
+// translateAndWriteToFile()
