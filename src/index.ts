@@ -22,16 +22,21 @@ interface BeerStyle {
   styleAttributes: string
 }
 
-async function fetchBeerStyleLinks(): Promise<string[]> {
+async function fetchBeerStyleLinks(): Promise<
+  { version: string; url: string }[]
+> {
   const url = 'https://www.bjcp.org/beer-styles/beer-style-guidelines/'
   const response = await axios.get(url)
   const $ = cheerio.load(response.data)
-  const styleLinks: string[] = []
+  const styleLinks: { version: string; url: string }[] = []
 
   $('.entry-content a').each((index, element) => {
     const href = $(element).attr('href')
     if (href && href.startsWith('https://www.bjcp.org/style/')) {
-      styleLinks.push(href)
+      const versionMatch = href.match(/\/style\/(\d{4})\//)
+      if (versionMatch) {
+        styleLinks.push({ version: versionMatch[1], url: href })
+      }
     }
   })
 
@@ -43,7 +48,7 @@ async function fetchBeerStyleData(url: string): Promise<BeerStyle> {
   const $ = cheerio.load(response.data)
 
   const category = $('h1.entry-title').text().trim()
-  const name = $('.entry-title a').text().trim()
+  const name = $('h1.entry-title a').attr('title')!.trim()
   const overallImpression = $('.overall-impression p').text().trim()
   const appearance = $('.appearance p').text().trim()
   const aroma = $('.aroma p').text().trim()
@@ -54,11 +59,11 @@ async function fetchBeerStyleData(url: string): Promise<BeerStyle> {
   const styleComparisonAndVitalStatistics = $('.style-comparison p')
     .text()
     .trim()
-  const ibu = $('.vital-statistics .row:eq(0) p').text().trim()
-  const srm = $('.vital-statistics .row:eq(1) p').text().trim()
-  const og = $('.vital-statistics .row:eq(2) p').text().trim()
-  const fg = $('.vital-statistics .row:eq(3) p').text().trim()
-  const abv = $('.vital-statistics .row:eq(4) p').text().trim()
+  const ibu = $('.vital-statistics .row:contains("IBUs") p').text().trim()
+  const srm = $('.vital-statistics .row:contains("SRM") p').text().trim()
+  const og = $('.vital-statistics .row:contains("OG") p').text().trim()
+  const fg = $('.vital-statistics .row:contains("FG") p').text().trim()
+  const abv = $('.vital-statistics .row:contains("ABV") p').text().trim()
   const commercialExamples = $('.commercial-examples').text().trim()
   const styleAttributes = $('.style-attributes').text().trim()
 
@@ -85,17 +90,20 @@ async function fetchBeerStyleData(url: string): Promise<BeerStyle> {
 
 async function main() {
   const styleLinks = await fetchBeerStyleLinks()
-  const beerStyles: BeerStyle[] = []
+  const beerStyles: { [key: string]: BeerStyle[] } = {}
 
-  for (const link of styleLinks) {
-    const beerStyleData = await fetchBeerStyleData(link)
-    beerStyles.push(beerStyleData)
+  for (const { version, url } of styleLinks) {
+    if (!beerStyles[version]) {
+      beerStyles[version] = []
+    }
+    const beerStyleData = await fetchBeerStyleData(url)
+    beerStyles[version].push(beerStyleData)
   }
 
-  console.log(beerStyles)
-
-  const jsonData = JSON.stringify(beerStyles, null, 2)
-  fs.writeFileSync('beerStyles.json', jsonData)
+  for (const version of Object.keys(beerStyles)) {
+    const jsonData = JSON.stringify(beerStyles[version], null, 2)
+    fs.writeFileSync(`${version}beerStyles.json`, jsonData)
+  }
 }
 
 main()
