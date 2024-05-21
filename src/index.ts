@@ -26,21 +26,27 @@ async function fetchBeerStyleLinks(): Promise<
   { version: string; url: string }[]
 > {
   const url = 'https://www.bjcp.org/beer-styles/beer-style-guidelines/'
-  const response = await axios.get(url)
-  const $ = cheerio.load(response.data)
   const styleLinks: { version: string; url: string }[] = []
 
-  $('.entry-content a').each((index, element) => {
-    const href = $(element).attr('href')
-    if (href && href.startsWith('https://www.bjcp.org/style/')) {
-      const versionMatch = href.match(/\/style\/(\d{4})\//)
-      if (versionMatch && href.match(/\d+[A-Za-z]\./)) {
-        styleLinks.push({ version: versionMatch[1], url: href })
-      }
-    }
-  })
+  try {
+    const response = await axios.get(url)
+    const $ = cheerio.load(response.data)
 
-  console.log(`Fetched ${styleLinks.length} style links`)
+    $('.entry-content a').each((index, element) => {
+      const href = $(element).attr('href')
+      if (href && href.startsWith('https://www.bjcp.org/style/')) {
+        const match = href.match(/\/style\/(\d{4})\/(\d+)\/(\d+[A-Za-z])\//)
+        if (match) {
+          styleLinks.push({ version: match[1], url: href })
+        }
+      }
+    })
+
+    console.log(`Fetched ${styleLinks.length} style links`)
+  } catch (error) {
+    console.error('Error fetching beer style links:', error)
+  }
+
   return styleLinks
 }
 
