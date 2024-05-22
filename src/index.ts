@@ -1,6 +1,5 @@
 // BJCP Scrapper
-import axios from 'axios'
-import cheerio from 'cheerio'
+import puppeteer from 'puppeteer'
 import fs from 'fs'
 
 interface BeerStyle {
@@ -27,93 +26,83 @@ async function fetchBeerStyleLinks(): Promise<
   { version: string; url: string }[]
 > {
   const url = 'https://www.bjcp.org/beer-styles/beer-style-guidelines/'
-  const styleLinks: { version: string; url: string }[] = []
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  await page.goto(url)
 
-  try {
-    const response = await axios.get(url)
-    const $ = cheerio.load(response.data)
+  console.log('Fetching beer style links...')
+  const links = await page.evaluate(() => {
+    const anchors = Array.from(document.querySelectorAll('.entry-content a'))
+    return anchors
+      .map((anchor) => (anchor as HTMLAnchorElement).href)
+      .filter((href) => href.startsWith('https://www.bjcp.org/style/'))
+  })
 
-    $('.entry-content a').each((index, element) => {
-      const href = $(element).attr('href')
-      if (href && href.startsWith('https://www.bjcp.org/style/')) {
-        const match = href.match(/\/style\/(\d{4})\/(\d+)\/(\d+[A-Za-z])\//)
-        if (match) {
-          styleLinks.push({ version: match[1], url: href })
-        }
+  await browser.close()
+
+  console.log(`Fetched ${links.length} style links`)
+  return links
+    .map((link) => {
+      const match = link.match(/\/style\/(\d{4})\/(\d+)\/(\d+[A-Za-z])\//)
+      if (match) {
+        return { version: match[1], url: link }
       }
+      return null
     })
-
-    console.log(`Fetched ${styleLinks.length} style links`)
-  } catch (error) {
-    console.error('Error fetching beer style links:', error)
-  }
-
-  return styleLinks
+    .filter(Boolean) as { version: string; url: string }[]
 }
 
 async function fetchBeerStyleData(url: string): Promise<BeerStyle | null> {
-  try {
-    const response = await axios.get(url)
-    const $ = cheerio.load(response.data)
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  await page.goto(url)
 
-    const category = $('h1.entry-title').text().trim()
-    const name = $('h1.entry-title a').attr('title')!.trim()
-    const overallImpression = $('.overall-impression p').text().trim()
-    const appearance = $('.appearance p').text().trim()
-    const aroma = $('.aroma p').text().trim()
-    const flavor = $('.flavor p').text().trim()
-    const mouthfeel = $('.mouthfeel p').text().trim()
-    const history = $('.history p').text().trim()
-    const characteristicIngredients = $('.ingredients p').text().trim()
-    const styleComparisonAndVitalStatistics = $('.style-comparison p')
-      .text()
-      .trim()
-    const ibu = $('.vital-statistics .row:contains("IBU") .cell:eq(1) p')
-      .text()
-      .trim()
-    const srm = $('.vital-statistics .row:contains("SRM") .cell:eq(1) p')
-      .text()
-      .trim()
-    const og = $('.vital-statistics .row:contains("OG") .cell:eq(1) p')
-      .text()
-      .trim()
-    const fg = $('.vital-statistics .row:contains("FG") .cell:eq(1) p')
-      .text()
-      .trim()
-    const abv = $('.vital-statistics .row:contains("ABV") .cell:eq(1) p')
-      .text()
-      .trim()
-    const commercialExamples = $('.commercial-examples').text().trim()
-    const styleAttributes = $('.style-attributes').text().trim()
-
-    console.log(`Fetched data for style: ${name} from ${url}`)
-    return {
-      category,
-      name,
-      overallImpression,
-      appearance,
-      aroma,
-      flavor,
-      mouthfeel,
-      history,
-      characteristicIngredients,
-      styleComparisonAndVitalStatistics,
-      ibu,
-      srm,
-      og,
-      fg,
-      abv,
-      commercialExamples,
-      styleAttributes,
+  console.log(`Fetching data for style: ${url}...`)
+  const data = await page.evaluate(() => {
+    const getTextContent = (selector: string) => {
+      const element = document.querySelector(selector)
+      return element ? element.textContent?.trim() || '' : ''
     }
-  } catch (error) {
-    console.error(`Error fetching data for ${url}:`, error)
-    return null
-  }
+
+    const getCellText = (label: string) => {
+      const rows = Array.from(
+        document.querySelectorAll('.vital-statistics .row')
+      )
+      const row = rows.find((r) => r.textContent?.includes(label))
+      return row
+        ? row.querySelector('.cell:nth-child(2) p')?.textContent?.trim() || ''
+        : ''
+    }
+
+    return {
+      category: getTextContent('h1.entry-title'),
+      name: getTextContent('h1.entry-title a'),
+      overallImpression: getTextContent('.overall-impression p'),
+      appearance: getTextContent('.appearance p'),
+      aroma: getTextContent('.aroma p'),
+      flavor: getTextContent('.flavor p'),
+      mouthfeel: getTextContent('.mouthfeel p'),
+      history: getTextContent('.history p'),
+      characteristicIngredients: getTextContent('.ingredients p'),
+      styleComparisonAndVitalStatistics: getTextContent('.style-comparison p'),
+      ibu: getCellText('IBU'),
+      srm: getCellText('SRM'),
+      og: getCellText('OG'),
+      fg: getCellText('FG'),
+      abv: getCellText('ABV'),
+      commercialExamples: getTextContent('.commercial-examples'),
+      styleAttributes: getTextContent('.style-attributes'),
+    }
+  })
+
+  await browser.close()
+  console.log(`Fetched data for style: ${data.name} from ${url}`)
+  return data
 }
 
 async function main() {
   try {
+    console.log('Starting beer style scraper...')
     const styleLinks = await fetchBeerStyleLinks()
     const beerStyles: { [key: string]: BeerStyle[] } = {}
 
@@ -145,7 +134,7 @@ async function main() {
 
 main()
 
-// Character Counter
+// // Character Counter
 // import * as fs from 'fs'
 // import * as path from 'path'
 
