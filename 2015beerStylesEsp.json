@@ -1,0 +1,29 @@
+[
+  {
+    "name": "American Light Lager",
+    "category_id": "1",
+    "style_id": "1A",
+    "overall_impression": "Cerveza rubia muy carbonatada, de cuerpo muy ligero y casi insípida, diseñada para consumirse muy fría. Muy refrescante y quita la sed.",
+    "appearance": "Color pajizo muy pálido a amarillo pálido. Cabeza blanca y espumosa que rara vez persiste. Muy clara.",
+    "aroma": "Aroma de malta bajo o nulo, aunque puede percibirse como granulado, dulce o a maíz si está presente. El aroma a lúpulo es ligero o nulo, con un carácter de lúpulo especiado o floral si está presente. Aunque es deseable un carácter de fermentación limpio, una ligera cantidad de carácter de levadura (especialmente un ligero sabor afrutado a manzana) no es un defecto. Un ligero DMS no es un defecto.",
+    "flavor": "Paladar relativamente neutro, con un final crujiente y seco y un sabor granuloso o a maíz de bajo a muy bajo, que podría percibirse como dulzor debido al escaso amargor. El sabor a lúpulo oscila entre nulo y bajo, y puede tener una cualidad floral, especiada o herbal (aunque raramente lo suficientemente fuerte como para detectarlo). Amargor del lúpulo de bajo a muy bajo. El equilibrio puede variar de ligeramente maltoso a ligeramente amargo, pero es relativamente parejo. Los altos niveles de carbonatación pueden acentuar la frescura del final seco. Carácter limpio de fermentación lager.",
+    "mouthfeel": "Cuerpo muy ligero (a veces acuoso). Muy carbonatada, con ligero carbónico en la lengua.",
+    "comments": "Diseñado para atraer a un público lo más amplio posible. Los sabores fuertes son un defecto.",
+    "history": "Coors fabricó brevemente una cerveza rubia ligera a principios de la década de 1940. Las versiones modernas fueron producidas por primera vez por Rheingold en 1967 para atraer a los bebedores preocupados por la dieta, pero sólo se hicieron populares a partir de 1973, después de que Miller Brewing adquiriera la receta y comercializara intensamente la cerveza entre los aficionados al deporte con la campaña \"sabe bien, llena menos\". Las cervezas de este género se convirtieron en las más vendidas en Estados Unidos en la década de 1990.",
+    "style_comparison": "Una versión con menos cuerpo, menos alcohol y menos calorías de una American Lager. Menos carácter de lúpulo y amargor que una Leichtbier.",
+    "tags": "equilibrado, fermentación baja, fermentación lenta, norteamérica, color pálido, familia de las lager pálidas, fuerza de sesión, estilo tradicional",
+    "original_gravity_min": 1.028,
+    "original_gravity_max": 1.04,
+    "international_bitterness_units_min": 8,
+    "international_bitterness_units_max": 12,
+    "final_gravity_min": 0.998,
+    "final_gravity_max": 1.008,
+    "alcohol_by_volume_min": 2.8,
+    "alcohol_by_volume_max": 4.2,
+    "color_min": 2,
+    "color_max": 3,
+    "ingredients": "Cebada de dos o seis carreras con un alto porcentaje (hasta el 40%) de arroz o maíz como adjuntos. Enzimas adicionales pueden aligerar aún más el organismo y reducir los hidratos de carbono.",
+    "examples": "Ejemplos comerciales Bud Light, Coors Light, Keystone Light, Michelob Light, Miller Lite, Old Milwaukee Light.",
+    "style_guide": "BJCP2015"
+  }
+]
